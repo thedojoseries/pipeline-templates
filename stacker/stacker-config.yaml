@@ -1,0 +1,18 @@
+#-------------------------------------------------------------------------#
+# Global variables
+#-------------------------------------------------------------------------#
+namespace: teamX
+stacker_execution_profile: &stacker_execution_profile stacker_execution
+stacker_bucket: "" 
+vpc_cidr_block: &vpc_cidr_block 10.0.0.0/16
+
+#-------------------------------------------------------------------------#
+# Stack Definitions (https://stacker.readthedocs.io/en/latest/config.html)
+#-------------------------------------------------------------------------#
+stacks:
+  - name: vpc-sg
+    profile: *stacker_execution_profile
+    template_path: templates/vpc-sg.yaml
+    variables:
+      VpcCidrBlock: *vpc_cidr_block
+      Namespace: teamX

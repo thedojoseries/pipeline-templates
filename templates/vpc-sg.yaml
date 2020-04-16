@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Creates a VPC and a Security Group for a web server
+
+Parameters:
+  VpcCidrBlock:
+    Description: The CIDR Block for the VPC
+    Type: String
+  Namespace: 
+    Description: The name of your team (e.g., team1, team2, team3 etc) account name in lower case (used in resource naming).
+    Type: String
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: !Ref VpcCidrBlock
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags: 
+        - Key: namespace
+          Value: !Ref Namespace
+  
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    DependsOn: VPC
+    Properties: 
+      GroupDescription: Security Group for a web server
+      GroupName: !Sub ${Namespace}-web-server
+      SecurityGroupEgress: 
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: "-1"
+      SecurityGroupIngress: 
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags: 
+        - Key: namespace
+          Value: !Ref Namespace
+      VpcId: !Ref VPC
+
+Outputs:
+  VpcId:
+    Value: !Ref VPC 
+  SgId:
+    Value: !Ref SecurityGroup

@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Deploys a CodePipeline Pipeline with linting and security-check stages
+
+Parameters:
+  Namespace:
+    Description: The name of your team (e.g., team1, team2, team3 etc)
+    Type: String
+  
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label:
+        default: Resource Naming 
+      Parameters:
+        - Namespace
+
+Resources:
+
+#================================================================================
+# CodePipeline Artifacts S3 Bucket
+#================================================================================
+
+  CodePipelineArtifactsS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: BUCKET_NAME
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: SSE_ALG
+      VersioningConfiguration:
+          Status: STATUS
+      PublicAccessBlockConfiguration:
+          BlockPublicAcls: BOOL
+          BlockPublicPolicy: BOOL
+          IgnorePublicAcls: BOOL
+          RestrictPublicBuckets: BOOL
+
+#================================================================================
+# CodeBuild Projects
+#================================================================================
+
+  CFNLintCodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+        Name: NAME
+        Description: DESCRIPTION
+        Artifacts:
+          Type: ARTIFACT
+        Environment:
+            Type: TYPE
+            ComputeType: COMPUTER_TYPE
+            Image: IMAGE
+        ServiceRole: IAM_ROLE_ARN
+        Source:
+            Type: SOURCE_TYPE
+            BuildSpec: |
+              version: 0.2
+              phases:
+                install:
+                  commands:
+                    - COMMANDS
+
+  CFNNagCodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      ...
+
+  InfraDeployCodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      ...
+
+#================================================================================
+# CodePipeline Deployment Pipeline
+#================================================================================
+
+  DeploymentPipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: NAME
+      ArtifactStore:
+          Location: LOCATION
+          Type: TYPE
+      RoleArn: IAM_ROLE_ARN
+      Stages:
+          - Name: NAME
+            Actions:
+              - Name: NAME
+                ActionTypeId:
+                  Category: CATEGORY
+                  Owner: OWNER
+                  Version: VERSION
+                  Provider: PROVIDER
+                OutputArtifacts:
+                  - Name: NAME
+                Configuration:
+                  S3Bucket: S3_BUCKET
+                  S3ObjectKey: S3_OBJECT_KEY
+                RunOrder: RUN_ORDER
+          - Name: NAME
+            Actions:
+              - Name: NAME
+                ActionTypeId:
+                  Category: CATEGORY
+                  Owner: OWNER
+                  Version: VERSION
+                  Provider: PROVIDER
+                Configuration:
+                  ProjectName: PROJECT_NAME
+                InputArtifacts:
+                  - Name: NAME
+                RunOrder: RUN_ORDER
+              - Name: NAME
+                ActionTypeId:
+                  Category: CATEGORY
+                  Owner: OWNER
+                  Version: VERSION
+                  Provider: PROVIDER
+                Configuration:
+                  ProjectName: PROJECT_NAME
+                InputArtifacts:
+                  - Name: NAME
+                RunOrder: RUN_ORDER
